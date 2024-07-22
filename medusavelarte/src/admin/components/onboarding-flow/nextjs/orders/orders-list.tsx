@@ -36,6 +36,19 @@ const OrdersListNextjs = ({ isComplete, data }: StepContentProps) => {
     }
   }
 
+  const fetchOrderDetails = async (orderId) => {
+    try {
+      const response = await fetch(`/store/orders/${orderId}`);
+      if (!response.ok) {
+        throw new Error(`Order with ID ${orderId} was not found`);
+      }
+      const data = await response.json();
+      // Procesa los datos
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (!cartId && product) {
       prepareNextjsCheckout()

@@ -1,3 +1,4 @@
+"use client";
 import { Button, Heading } from "@medusajs/ui";
 import { useState } from "react";
 import { DatePicker } from "@medusajs/ui";
@@ -7,33 +8,11 @@ import Divider from "@modules/common/components/divider";
 import { CartWithCheckoutStep } from "types/global";
 import DiscountCode from "@modules/checkout/components/discount-code";
 import LocalizedClientLink from "@modules/common/components/localized-client-link";
+import TimeSlotDropdown from "../components/TimeSlotDropdown";
 
 type SummaryProps = {
   cart: CartWithCheckoutStep;
 };
-
-const generateTimeSlots = () => {
-  const timeSlots = [];
-  let startTime = new Date();
-  startTime.setHours(13, 15, 0, 0); // Empieza a las 13:15
-  
-  const endTime = new Date();
-  endTime.setHours(15, 15, 0, 0); // Termina a las 15:15
-
-  while (startTime <= endTime) {
-    const label = `${startTime.getHours()}:${startTime.getMinutes().toString().padStart(2, '0')} - ${startTime.getHours()}:${(startTime.getMinutes() + 30).toString().padStart(2, '0')}`;
-    const start = `${startTime.getHours()}:${startTime.getMinutes().toString().padStart(2, '0')}`;
-    const end = `${startTime.getHours()}:${(startTime.getMinutes() + 30).toString().padStart(2, '0')}`;
-    
-    timeSlots.push({ label, start, end });
-    
-    startTime.setMinutes(startTime.getMinutes() + 30); // Incrementa 30 minutos
-  }
-
-  return timeSlots;
-};
-
-const timeSlots = generateTimeSlots();
 
 const Summary = ({ cart }: SummaryProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -55,25 +34,19 @@ const Summary = ({ cart }: SummaryProps) => {
       <DiscountCode cart={cart} />
       <div className="w-[250px]">
         <DatePicker
-          placeholder="Selecciona una fecha y franja horaria"
+          placeholder="Selecciona una fecha"
           selected={selectedDate}
           onChange={handleDateChange}
-          showTimePicker
-          presets={timeSlots.map(slot => ({
-            label: slot.label,
-            date: selectedDate ? new Date(selectedDate.setHours(parseInt(slot.start.split(':')[0]), parseInt(slot.start.split(':')[1]))) : undefined,
-          }))}
-          onSelectTime={(time: Date) => {
-            const formattedTime = `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`;
-            const selectedSlot = timeSlots.find(slot => slot.start === formattedTime);
-            if (selectedSlot) {
-              setSelectedTimeSlot(selectedSlot.label);
-            }
-          }}
         />
+      </div>
+      <div className="w-[250px]">
+        <TimeSlotDropdown onSelect={handleTimeSlotChange} /> {/* Usa el nuevo componente */}
       </div>
       {selectedDate && selectedTimeSlot && (
         <p>Fecha y franja horaria seleccionadas: {selectedDate.toLocaleDateString()} - {selectedTimeSlot}</p>
+      )}
+      {selectedTimeSlot && (
+        <p>Franja horaria seleccionada: {selectedTimeSlot}</p>
       )}
       <Divider />
       <CartTotals data={cart} />
