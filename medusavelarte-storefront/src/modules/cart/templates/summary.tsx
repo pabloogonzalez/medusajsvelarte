@@ -1,8 +1,6 @@
 "use client";
-import { Button, Heading } from "@medusajs/ui";
+import { Button, Heading, DatePicker } from "@medusajs/ui";
 import { useState } from "react";
-import { DatePicker } from "@medusajs/ui";
-
 import CartTotals from "@modules/common/components/cart-totals";
 import Divider from "@modules/common/components/divider";
 import { CartWithCheckoutStep } from "types/global";
@@ -15,10 +13,10 @@ type SummaryProps = {
 };
 
 const Summary = ({ cart }: SummaryProps) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
 
-  const handleDateChange = (date: Date | null) => {
+  const handleDateChange = (date: Date | undefined) => {
     setSelectedDate(date);
   };
 
@@ -33,27 +31,22 @@ const Summary = ({ cart }: SummaryProps) => {
       </Heading>
       <DiscountCode cart={cart} />
       <div className="w-[250px]">
-        <DatePicker
-          placeholder="Selecciona una fecha"
-          selected={selectedDate}
-          onChange={handleDateChange}
-        />
+        <DatePicker value={selectedDate} onChange={handleDateChange} />
       </div>
       <div className="w-[250px]">
-        <TimeSlotDropdown onSelect={handleTimeSlotChange} /> {/* Usa el nuevo componente */}
+        <TimeSlotDropdown onSelect={handleTimeSlotChange} />
       </div>
       {selectedDate && selectedTimeSlot && (
-        <p>Fecha y franja horaria seleccionadas: {selectedDate.toLocaleDateString()} - {selectedTimeSlot}</p>
+        <p>
+          Fecha y franja horaria seleccionadas: {selectedDate.toLocaleDateString()} - {selectedTimeSlot}
+        </p>
       )}
       {selectedTimeSlot && (
         <p>Franja horaria seleccionada: {selectedTimeSlot}</p>
       )}
       <Divider />
       <CartTotals data={cart} />
-      <LocalizedClientLink
-        href={"/checkout?step=" + cart.checkout_step}
-        data-testid="checkout-button"
-      >
+      <LocalizedClientLink href={`/checkout?step=${cart.checkout_step}`} data-testid="checkout-button">
         <Button className="w-full h-10">Ir al checkout</Button>
       </LocalizedClientLink>
     </div>
