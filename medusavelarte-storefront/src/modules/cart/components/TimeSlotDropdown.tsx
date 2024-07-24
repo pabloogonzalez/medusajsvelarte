@@ -7,10 +7,12 @@ type TimeSlotDropdownProps = {
 
 const TimeSlotDropdown: React.FC<TimeSlotDropdownProps> = ({ onSelect }) => {
   const timeSlots = [
+    "12:45-13:15",
     "13:15-13:45",
     "13:45-14:15",
     "14:15-14:45",
     "14:45-15:15",
+    "15:15-15:45",
   ];
 
   return (
